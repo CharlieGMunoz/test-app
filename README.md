@@ -145,7 +145,7 @@ npm start  # Launch the interactive quiz
 npm test   # Run Node.js's built-in test runner
 ```
 
-The repository currently does not contain test files, so `npm test` is configured for future automated tests and will report that no tests were found until tests are added.
+The repository currently does not contain test files, so `npm test` is configured for future automated tests and completes without exercising application behavior until tests are added.
 
 The code uses native Node.js APIs only:
 
