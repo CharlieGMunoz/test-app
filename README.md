@@ -164,6 +164,14 @@ The code uses native Node.js APIs only:
 - `src/colors.js` provides small formatting helpers using ANSI escape sequences.
 - `data/questions.json` keeps quiz content separate from application logic. Its question fields control the available options, correct answer, and whether an explanation is shown.
 
+## Troubleshooting
+
+- **Colors or formatting look incorrect:** use a terminal with ANSI escape-code support. Otherwise, ANSI sequences may appear as raw characters.
+- **The progress bar or icons look wrong:** use a terminal/font with Unicode support; the application prints characters such as `█`, `░`, and emoji.
+- **The quiz cannot load its questions:** run the commands from the project directory and confirm that `data/questions.json` is present.
+- **The quiz fails while loading data:** validate `data/questions.json` as JSON and confirm each question has `question`, `options`, and a zero-based `answer` index. The optional `explanation` field may be omitted.
+- **`npm test` appears to do nothing:** this is expected while the repository has no dedicated test files; run `npm start` to check the interactive flow manually.
+
 ## Contributing
 
 Contributions are welcome. To propose a change:
