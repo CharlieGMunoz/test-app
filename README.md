@@ -17,6 +17,7 @@
 - [Question Data](#question-data)
 - [Development](#development)
 - [How It Works](#how-it-works)
+- [Troubleshooting](#troubleshooting)
 - [Contributing](#contributing)
 - [License](#license)
 
@@ -24,25 +25,25 @@
 
 Quiz CLI is a dependency-free terminal quiz application built with modern Node.js. It presents multiple-choice questions across three categories—JavaScript Basics, Node.js Fundamentals, and General Programming—then provides immediate feedback, explanations, progress tracking, scoring, and a review of missed questions.
 
-The project is also a compact demonstration of core JavaScript and Node.js concepts, including ES modules, asynchronous programming, file-system access, `readline`, classes, array methods, destructuring, template literals, and error handling.
+The project is also a compact demonstration of core JavaScript and Node.js concepts, including ES modules, asynchronous programming, file-system access, `readline`, classes, array methods, destructuring, template literals, and error handling. It is a local terminal application: it does not start a server, call an API, use the network, persist scores, or require environment variables.
 
 ## Features
 
 - Interactive category selection from the terminal.
 - Configurable quiz length based on the selected category.
-- Fisher–Yates question shuffling for each quiz session.
+- Fisher–Yates shuffling of the selected questions whenever a new quiz starts. For a 3- or 5-question quiz, the application first takes that many questions from the category's source order and then shuffles that selected set; it does not randomly sample from the entire category.
 - Multiple-choice answer selection with input validation.
-- Immediate correct/incorrect feedback and explanations.
+- Immediate correct/incorrect feedback and, when provided in the question data, an explanation.
 - Visual progress bar and question counter.
 - Score percentage and performance message at the end of each quiz.
 - Incorrect-answer review showing the selected and correct answers.
 - Option to play another quiz without restarting the process.
-- ANSI-colored terminal output with no third-party runtime dependencies.
+- ANSI-colored terminal output and Unicode symbols, with no third-party runtime dependencies.
 
 ## Prerequisites
 
 - [Node.js](https://nodejs.org/) 18.0.0 or newer.
-- A terminal capable of displaying standard ANSI escape codes.
+- A terminal capable of displaying ANSI escape codes and the Unicode characters used by the progress bar and status messages. Terminals that do not support these may show raw escape sequences or substitute/misrender some symbols.
 - Git, if cloning the repository.
 
 No external npm packages are required.
@@ -56,11 +57,7 @@ git clone https://github.com/CharlieGMunoz/test-app.git
 cd test-app
 ```
 
-The project currently has no runtime dependencies, so an install step is optional. Running `npm install` is safe if you want npm to create or refresh local project metadata:
-
-```bash
-npm install
-```
+No dependency installation is required. The application uses only Node.js built-in modules, so you can run it immediately after cloning.
 
 ## Usage
 
@@ -81,10 +78,12 @@ The application will:
 1. Display the welcome banner.
 2. Ask you to choose a category.
 3. Ask whether to answer all available questions or a shorter quiz.
-4. Present each question as a numbered multiple-choice prompt.
-5. Show feedback and an explanation after every answer.
-6. Display the final score and missed-question review.
-7. Ask whether you want to play again.
+4. Take the first N questions from the category when a shorter quiz is selected, then shuffle those selected questions.
+5. Pause for Enter before the first question and after each question except the last one.
+6. Present each question as a numbered multiple-choice prompt and reject selections outside the displayed range.
+7. Show correct/incorrect feedback and the question's explanation when the `explanation` field contains one.
+8. Display the final score and missed-question review.
+9. Ask whether you want to play again; a response beginning with `y` starts another quiz.
 
 Example interaction:
 
@@ -104,7 +103,7 @@ How many questions?
 Your choice (enter number): 2
 ```
 
-Enter a valid option number whenever prompted. Invalid selections are rejected until a number in the displayed range is provided.
+Enter a valid option number whenever prompted. Invalid selections are rejected until a number in the displayed range is provided. When the program asks you to press Enter, submit an empty response to continue; the pause is only a checkpoint and does not select an answer.
 
 ## Project Structure
 
@@ -134,7 +133,7 @@ Questions are loaded at runtime from `data/questions.json`. Each category has a 
 }
 ```
 
-The `answer` field is a zero-based index into `options`; in the example above, `2` identifies `const`. To add content, update the JSON while preserving this structure. The application automatically discovers category IDs from the `categories` object.
+The `answer` field is a zero-based index into `options`; in the example above, `2` identifies `const`. The optional `explanation` field is displayed only when that question data includes a non-empty value. To add content, update the JSON while preserving this structure. The application automatically discovers category IDs from the `categories` object. Keep `answer` within the zero-based `options` range and ensure the JSON remains valid.
 
 ## Development
 
@@ -145,7 +144,7 @@ npm start  # Launch the interactive quiz
 npm test   # Run Node.js's built-in test runner
 ```
 
-The repository currently does not contain test files, so `npm test` is configured for future automated tests and completes without exercising application behavior until tests are added.
+`npm test` invokes Node.js's built-in test runner. The repository currently has no dedicated test files, so this command does not exercise the quiz behavior until tests are added; use `npm start` for a manual interactive check.
 
 The code uses native Node.js APIs only:
 
@@ -160,7 +159,15 @@ The code uses native Node.js APIs only:
 - `src/input.js` wraps `readline` prompts in promises and validates numeric selections.
 - `src/quiz.js` copies and shuffles questions, tracks progress and answers, calculates the score, and renders results.
 - `src/colors.js` provides small formatting helpers using ANSI escape sequences.
-- `data/questions.json` keeps quiz content separate from application logic.
+- `data/questions.json` keeps quiz content separate from application logic. Its question fields control the available options, correct answer, and whether an explanation is shown.
+
+## Troubleshooting
+
+- **Colors or formatting look incorrect:** use a terminal with ANSI escape-code support. Otherwise, ANSI sequences may appear as raw characters.
+- **The progress bar or icons look wrong:** use a terminal/font with Unicode support; the application prints characters such as `█`, `░`, and emoji.
+- **The quiz cannot load its questions:** run the commands from the project directory and confirm that `data/questions.json` is present.
+- **The quiz fails while loading data:** validate `data/questions.json` as JSON and confirm each question has `question`, `options`, and a zero-based `answer` index. The optional `explanation` field may be omitted.
+- **`npm test` appears to do nothing:** this is expected while the repository has no dedicated test files; run `npm start` to check the interactive flow manually.
 
 ## Contributing
 
