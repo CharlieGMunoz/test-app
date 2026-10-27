@@ -17,6 +17,7 @@
 - [Question Data](#question-data)
 - [Development](#development)
 - [How It Works](#how-it-works)
+- [Troubleshooting](#troubleshooting)
 - [Contributing](#contributing)
 - [License](#license)
 
