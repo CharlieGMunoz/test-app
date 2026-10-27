@@ -17,6 +17,7 @@
 - [Question Data](#question-data)
 - [Development](#development)
 - [How It Works](#how-it-works)
+- [Troubleshooting](#troubleshooting)
 - [Contributing](#contributing)
 - [License](#license)
 
@@ -56,11 +57,7 @@ git clone https://github.com/CharlieGMunoz/test-app.git
 cd test-app
 ```
 
-The project currently has no runtime dependencies, so an install step is optional. Running `npm install` is safe if you want npm to create or refresh local project metadata:
-
-```bash
-npm install
-```
+No dependency installation is required. The application uses only Node.js built-in modules, so you can run it immediately after cloning.
 
 ## Usage
 
